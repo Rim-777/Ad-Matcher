@@ -1,0 +1,16 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: db
+  username: postgres
+  password:
+  port: 5432
+  pool:  5
+
+development:
+  <<: *default
+  database: ad_matcher_development
+
+test:
+  <<: *default
+  database: ad_matcher_test
