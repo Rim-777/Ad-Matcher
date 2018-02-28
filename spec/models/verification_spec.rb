@@ -86,29 +86,7 @@ RSpec.describe Verification, type: :model do
   end
 
   describe '#add_reports' do
-    let!(:campaign1) do
-      create(:campaign, status: 'deleted', external_reference: '1', self_reference: 12, verification: verification)
-    end
-
-    let!(:ad1) do
-      create(:ad, status: 'enabled', campaign: campaign1, reference: '1')
-    end
-
-    let!(:campaign2) do
-      create(:campaign, status: 'paused', external_reference: '2', self_reference: 13, verification: verification)
-    end
-
-    let!(:ad2) do
-      create(:ad, status: 'disabled', campaign: campaign2, reference: '2')
-    end
-
-    let!(:campaign3) do
-      create(:campaign, status: 'paused', external_reference: '3', self_reference: 14, verification: verification)
-    end
-
-    let!(:ad3) do
-      create(:ad, status: 'enabled', campaign: campaign3, reference: '3')
-    end
+    let_campaigns_and_ads
 
     it 'stores reports in db if the statuses do not match' do
       expect {verification.send(:add_reports)}.to change(Report, :count).by(2)
@@ -127,6 +105,37 @@ RSpec.describe Verification, type: :model do
       verification.send(:add_reports)
       expect(verification.reports.first.message).to eq 'campaign id:12 deleted, ad: enabled'
       expect(verification.reports.last.message).to eq 'campaign id:14 paused, ad: enabled'
+    end
+  end
+
+  describe '#send_reports' do
+    let_campaigns_and_ads
+
+    let!(:reports) {create_list(:report, 2, verification: verification)}
+
+    it 'returns an Array' do
+      expect(verification.send(:send_reports)).to be_a(Array)
+    end
+
+    it 'returns an array of hashes with messages' do
+      expect(verification.send(:send_reports)).to eq [{'message' => 'be happy!!!'}, {'message' => 'be happy!!!'}]
+    end
+
+    it 'removes from the db the verification object' do
+      expect {verification.send(:send_reports)}.to change(Verification, :count).by(-1)
+
+    end
+
+    it 'removes from the db all dependent reports' do
+      expect {verification.send(:send_reports)}.to change(Report, :count).by(-2)
+    end
+
+    it 'removes from the db all dependent campaigns' do
+      expect {verification.send(:send_reports)}.to change(Campaign, :count).by(-3)
+    end
+
+    it 'removes from the db all ads that are dependent through campaigns' do
+      expect {verification.send(:send_reports)}.to change(Ad, :count).by(-3)
     end
   end
 end

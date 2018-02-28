@@ -7,6 +7,7 @@ FactoryBot.definition_file_paths << File.join(File.dirname(__FILE__), 'factories
 FactoryBot.find_definitions
 
 RSpec.configure do |config|
+  config.extend ModelMacros, type: :model
   config.include FactoryBot::Syntax::Methods
   config.include(Shoulda::Matchers::ActiveModel, type: :model)
   config.include(Shoulda::Matchers::ActiveRecord, type: :model)

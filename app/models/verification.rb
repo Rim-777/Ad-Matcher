@@ -44,6 +44,6 @@ class Verification < ActiveRecord::Base
   end
 
   def send_reports
-    result = reports.as_json(only: :description); destroy;  result
+    result = reports.as_json(only: :message); destroy;  result
   end
 end
