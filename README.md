@@ -76,6 +76,11 @@ Enter the root application address in the browser:
 ```shell
 http://localhost:3000
 ```
+#### Future improvements
+if you are going to use this project in production mode 
+you might need improve the application. You are able to do next improvements:
+- add validations for each element of params.
+- move the final objects deleting action to background job. 
 
 ### License
 
